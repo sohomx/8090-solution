@@ -1,0 +1,122 @@
+PRD.md:5: ACME Corp relies on a decades-old internal system to calculate travel reimbursements for employees. Built over 60 years ago, this system is still used daily despite the fact that no one fully understands how it works. The original engineers are long gone, the source code is inaccessible, and there is no formal documentation of the system's logic.
+PRD.md:7: Although the system continues to operate, stakeholders have observed frequent anomalies: unpredictable reimbursement amounts, inconsistent treatment of receipts, and odd behaviors tied to specific trip lengths or distances. Attempts to document or decode the logic have failed, and different departments now hold conflicting folklore about how the system might work.
+PRD.md:11: 8090 has built a new system but ACME Corp is confused by the differences in results. Your mission is to figure out the original business logic so we can explain why ours is different and better.
+PRD.md:17: - The number of days spent traveling
+PRD.md:18: - The total number of miles traveled
+PRD.md:19: - The total dollar amount of submitted receipts
+PRD.md:21: The system returns a single numeric reimbursement amount with no breakdown or explanation. There is widespread belief that the result is influenced by a mix of per diem rules, mileage adjustments, receipt totals, and possibly other unknown factors.
+PRD.md:23: It's also suspected that there are one or two bugs or quirks in the system's calculations—errors or artifacts from past modifications. These may produce results that appear illogical, but they are part of the current output and must be preserved in the replica.
+PRD.md:35: - Accepts the same input parameters (trip duration, miles, receipt total)
+PRD.md:42: - A set of informal "discovery" interviews with long-time ACME employees
+INTERVIEWS.md:1: # Employee Discovery Interviews
+INTERVIEWS.md:15: **Marcus:** Well, not bad exactly. Just... unpredictable. Like, I can do the exact same trip twice and get completely different reimbursements. Makes no sense.
+INTERVIEWS.md:19: **Marcus:** Sure. Last month I did Cleveland to Detroit, three days, maybe 180 miles of driving, decent hotel. Got reimbursed $847. Two weeks later, almost identical trip—Cleveland to Detroit again, three days, similar expenses—got $623. Same receipt total, same everything.
+INTERVIEWS.md:27: **Marcus:** Oh man, long trips are where it gets weird. Everyone says there's a sweet spot around 5-6 days, but I'm not convinced. I did an 8-day swing through Ohio and Indiana last year—tons of driving, hit like six cities—and the reimbursement was incredible. Way more than I expected.
+INTERVIEWS.md:29: But then Janet from compliance did a 7-day conference in Denver, barely left the hotel, and she got peanuts. So maybe it's not about length, maybe it's about... I don't know, effort?
+INTERVIEWS.md:33: **Marcus:** Like, how hard you're working. The system somehow knows if you're actually doing business or just coasting. That 8-day trip of mine? I was hitting 300+ miles some days, meetings morning to night. Maybe it rewards hustle?
+INTERVIEWS.md:37: **Marcus:** Could be totally wrong though. [laughs] I also thought for a while that it cared about which day of the week you submitted, but that turned out to be garbage. Though Kevin from procurement still swears by submitting on Tuesdays.
+INTERVIEWS.md:39: **TPM:** What about mileage specifically?
+INTERVIEWS.md:41: **Marcus:** Mileage is... complicated. Short drives, you get the standard rate, no surprises. But longer drives? It's like the system gets confused or something.
+INTERVIEWS.md:43: I did a 600-mile trip to Nashville once. Based on the rate for shorter trips, I expected like $350 in mileage reimbursement. Got $298. Not terrible, but definitely not linear.
+INTERVIEWS.md:47: **Marcus:** Sort of? But then Dave from marketing did an 800-mile trip and swears he got more per mile than I did. Could be he's wrong about his mileage, or maybe there's some other factor. Distance bonuses? Time of year? Who knows.
+INTERVIEWS.md:49: **TPM:** Any patterns with receipts?
+INTERVIEWS.md:51: **Marcus:** [sighs] The receipt thing is the most frustrating part. I used to think higher receipts meant higher reimbursement, period. Makes sense, right?
+INTERVIEWS.md:53: Wrong. I've had $2,000 expense weeks that got me less than $1,200 weeks. There's definitely some kind of cap or penalty for spending too much, but nobody knows where it kicks in.
+INTERVIEWS.md:59: Like, I had one trip where I kept it super modest—$60 a day in expenses. Got a decent reimbursement. Next trip, I went a little higher—$90 a day. Reimbursement was worse! Made no sense.
+INTERVIEWS.md:65: **TPM:** Different rules for different departments?
+INTERVIEWS.md:69: But here's the weirdest thing—I swear the system remembers your history. Like, if you've been submitting a lot of big expense reports, it starts getting stingy. But if you keep it modest for a few months, it gets more generous.
+INTERVIEWS.md:73: **Marcus:** Could be coincidence. But I've started spacing out my big trips specifically because of this theory. Seems to work, but who knows?
+INTERVIEWS.md:77: **Marcus:** Oh, tons. There's the "magic number" theory—some people swear that certain receipt totals always get good reimbursements. Like, $847 is supposedly a lucky number, based on one person's anecdotal experience.
+INTERVIEWS.md:79: There's the "efficiency bonus" theory—that you get extra money for covering lots of ground in a short time. That one might actually be true.
+INTERVIEWS.md:81: And then there's the "rounding bug" theory—that if your receipts end in certain cents amounts, the system messes up the calculation in your favor. I've never tested that one.
+INTERVIEWS.md:89: **Marcus:** Sure thing. And hey, if you figure out how that thing actually works, let me know. I'll buy you dinner.
+INTERVIEWS.md:101: **Lisa:** Of course! Though I have to warn you, I probably see this system from a different angle than most people. I'm the one who has to try to make sense of the numbers after the fact.
+INTERVIEWS.md:107: Take the per diem calculation. Everyone assumes there's a standard daily rate, and mostly there is. $100 a day seems to be the base. But then there are these weird adjustments that nobody can explain.
+INTERVIEWS.md:111: **Lisa:** Well, 5-day trips almost always get a bonus. Not exactly sure how much, but it's consistent. 4-day trips, 6-day trips, normal rates. But 5 days? Always a little extra.
+INTERVIEWS.md:113: Except last week I saw a 5-day trip that didn't get the bonus. Same person who usually gets it, similar expenses. I have no idea what was different.
+INTERVIEWS.md:121: **TPM:** What about mileage calculations?
+INTERVIEWS.md:123: **Lisa:** Oh, mileage is definitely tiered. First 100 miles or so, you get the full rate—like 58 cents per mile. After that, it drops.
+INTERVIEWS.md:125: But it's not a simple drop. I've tried to map it out in Excel, and it's some kind of curve. High-mileage trips still pay well, just not proportionally.
+INTERVIEWS.md:131: Marcus from sales swears that 800-mile trips get better per-mile rates than 600-mile trips, but I've seen evidence that contradicts that. Could be other factors at play.
+INTERVIEWS.md:135: **Lisa:** Trip length, maybe? Spending patterns? I've noticed that people who keep their expenses modest on long trips seem to do better on mileage reimbursement. But that could be my imagination.
+INTERVIEWS.md:137: **TPM:** What about receipt processing?
+INTERVIEWS.md:139: **Lisa:** That's where it gets really weird. There's definitely a cap on how much of your receipts get reimbursed, but it's not a hard cap.
+INTERVIEWS.md:141: Like, someone submits $1,000 in receipts, they might get $800 reimbursed. Someone else submits $1,200, they get $850. It's not proportional.
+INTERVIEWS.md:145: **Lisa:** Yeah, but the curve is weird. Medium-high amounts—like $600-800—seem to get really good treatment. Higher than that, each dollar matters less and less.
+INTERVIEWS.md:147: And really low amounts get penalized. Like, if you submit $50 in receipts for a multi-day trip, you're better off submitting nothing. The reimbursement is often worse than just the base per diem.
+INTERVIEWS.md:151: **Lisa:** It does! And inconsistent. I've seen $30 receipt totals get decent reimbursements, and $80 totals get penalties. There might be some other factor—trip length, maybe, or total mileage—that affects how the receipt penalties work.
+INTERVIEWS.md:155: **Lisa:** Categories? The system doesn't really categorize trips explicitly, but there do seem to be different calculation paths.
+INTERVIEWS.md:157: Quick trips with high mileage get treated differently than long trips with low mileage. But within those broad categories, there's still a lot of variation.
+INTERVIEWS.md:159: **TPM:** Different how?
+INTERVIEWS.md:161: **Lisa:** Well, the efficiency thing is real. People who cover a lot of ground in a short time get bonuses. But I can't figure out the exact calculation.
+INTERVIEWS.md:163: It's not just miles divided by days. I've seen 200 miles per day get a smaller bonus than 150 miles per day, depending on other factors.
+INTERVIEWS.md:167: **Lisa:** Spending, maybe? Trip length? Time of year? I honestly don't know. I've built like five different models trying to predict reimbursements, and none of them work consistently.
+INTERVIEWS.md:175: **Lisa:** I think it evolved over time. Started simple, then people kept adding rules and exceptions and adjustments. Now it's this weird hybrid system that nobody fully understands.
+INTERVIEWS.md:181: **Lisa:** The rounding thing is definitely intentional, though. Well, probably. If your receipts end in 49 or 99 cents, you often get a little extra money. Like the system rounds up twice or something.
+INTERVIEWS.md:189: **Lisa:** The variation is the most interesting part. Same person, same type of trip, different reimbursements. It's usually small differences—5-10%—but it's consistent.
+INTERVIEWS.md:199: **Lisa:** Happy to help! And hey, if you figure out the formula, can you share it? I'd love to finally understand what I'm looking at in these reports.
+INTERVIEWS.md:209: **TPM:** Dave, thanks for joining today.
+INTERVIEWS.md:215: **Dave:** Confusing, mostly. [laughs] Like, I went to this conference in Austin last year—4 days, normal expenses, maybe 100 miles of driving around the city. Got a really good reimbursement.
+INTERVIEWS.md:221: **Dave:** I thought maybe it was the city? Like, maybe the system has different rates for different places? But that seemed too complicated.
+INTERVIEWS.md:227: **Dave:** Yeah, that's weird too. I drove to Chicago once—like 300 miles from here. Good mileage reimbursement, made sense.
+INTERVIEWS.md:229: But then I drove to Indianapolis, which is less far, and the mileage rate seemed higher per mile. Lisa from accounting says it's some kind of curve, but honestly, I just see randomness.
+INTERVIEWS.md:243: But Sarah from ops did something similar and got a huge bonus. She thinks it's because she hit some magic combination of days and miles and spending.
+INTERVIEWS.md:247: **Dave:** That's her theory. Like, if you get the right numbers in all three categories, the system gives you a jackpot. But I've never hit it, so I can't confirm.
+INTERVIEWS.md:249: **TPM:** Have you noticed anything about receipt amounts?
+INTERVIEWS.md:251: **Dave:** Oh yeah, there's definitely something there. I learned early on not to submit tiny amounts. Like, if I just have a parking receipt for $12, I don't even bother. The reimbursement is usually worse than just leaving it off.
+INTERVIEWS.md:255: **Dave:** Like, if I submit nothing, I get the base per diem. If I submit $12 in receipts, I might get less than the per diem. Makes no sense, but I've seen it happen.
+INTERVIEWS.md:259: **Dave:** Mixed results. I had one trip where I spent like $900—nice hotel, good dinners, some client entertainment. Got reimbursed for maybe $600 of it.
+INTERVIEWS.md:261: But then Kevin says he's had $1,200 expense weeks that got almost full reimbursement. So maybe it depends on the type of expenses? Or the trip length? Or Kevin's just making things up. [laughs]
+INTERVIEWS.md:285: **Dave:** [laughs] Keep your expectations low? And maybe talk to Kevin if you want to go down the rabbit hole of optimization theories.
+INTERVIEWS.md:295: **Dave:** No problem! And hey, if you can make the new system more predictable, that'd be great. Even if it's less generous, at least I'd know what to expect.
+INTERVIEWS.md:299: ## Jennifer from HR
+INTERVIEWS.md:305: **TPM:** Hi Jennifer, thanks for taking the time.
+INTERVIEWS.md:307: **Jennifer:** Of course! I'm always happy to help, especially with something that affects so many employees.
+INTERVIEWS.md:311: **Jennifer:** Well, from an HR standpoint, it's... challenging. We get a lot of complaints about inconsistency, but when we try to investigate, we can't find clear patterns.
+INTERVIEWS.md:315: **Jennifer:** Mostly around fairness. People see their colleagues get better reimbursements for similar trips and assume there's favoritism or errors.
+INTERVIEWS.md:317: But when we dig into the details, the trips are never actually identical. Different dates, different routes, different spending patterns. So it's hard to say if the system is being unfair or if there are just factors people aren't considering.
+INTERVIEWS.md:321: **Jennifer:** Probably. The system is old and complex. I wouldn't be surprised if there are calculations happening that nobody fully understands anymore.
+INTERVIEWS.md:325: **Jennifer:** A few things. New employees tend to get lower reimbursements at first, but that could be because they're not familiar with optimal practices yet.
+INTERVIEWS.md:331: **Jennifer:** Well, the small receipts thing is real. We always warn new hires not to submit tiny expense amounts. Better to keep receipts over a certain threshold.
+INTERVIEWS.md:337: **Jennifer:** That's where we get the most complaints. People expect longer trips to get proportionally higher reimbursements, but that's not always the case.
+INTERVIEWS.md:339: There seems to be a sweet spot around 4-6 days where the reimbursements are particularly good. Shorter or longer than that, and people are often disappointed.
+INTERVIEWS.md:343: **Jennifer:** I think the system was designed to encourage a certain type of business travel. Not too short that you're not really accomplishing anything, not so long that you're living it up on the company dime.
+INTERVIEWS.md:347: **TPM:** What about differences between departments?
+INTERVIEWS.md:349: **Jennifer:** That's interesting. Sales seems to do better overall, but they also travel more and probably understand the system better.
+INTERVIEWS.md:353: Operations gets mixed results. They do a lot of different types of trips, so maybe the system treats them inconsistently.
+INTERVIEWS.md:357: **Jennifer:** Well, Sarah from ops gets great reimbursements, but she's very strategic about her trips. She plans routes and timing specifically to optimize reimbursements.
+INTERVIEWS.md:363: **Jennifer:** I don't know the details, but she's got theories about optimal combinations of trip length, mileage, and spending. She treats it like a game.
+INTERVIEWS.md:367: **Jennifer:** It works for her, but it's also kind of absurd that employees need to become experts in expense optimization just to get fair reimbursements.
+INTERVIEWS.md:371: **Jennifer:** The variation is the biggest issue from an HR perspective. Even when we can't find obvious unfairness, the fact that similar trips get different reimbursements creates the perception of unfairness.
+INTERVIEWS.md:375: **Jennifer:** We explain that the system is complex and that there are many factors involved. We encourage people to be consistent with their travel practices and not to overthink it.
+INTERVIEWS.md:381: **Jennifer:** Transparency, mostly. Even if the calculations are complex, people should be able to understand why they got the reimbursement they did.
+INTERVIEWS.md:383: And consistency. Similar trips should get similar reimbursements, unless there's a clear reason why they're different.
+INTERVIEWS.md:387: **Jennifer:** The current system might be mathematically sophisticated, but it's a communication nightmare. Too much black box, not enough explanation.
+INTERVIEWS.md:389: **TPM:** Jennifer, this has been really helpful. Thank you.
+INTERVIEWS.md:391: **Jennifer:** You're welcome! And please, make the new system more user-friendly. Our employees deserve to understand how their reimbursements are calculated.
+INTERVIEWS.md:411: **Kevin:** There are definitely patterns, you just have to look at the right factors. Everyone focuses on the obvious stuff—trip length, total expenses, total mileage. But those are just the starting points.
+INTERVIEWS.md:415: **Kevin:** Efficiency is huge. The system absolutely rewards high miles-per-day ratios. But it's not linear. There's a sweet spot around 180-220 miles per day where the bonuses are maximized.
+INTERVIEWS.md:417: Go too low, penalty. Go too high, the bonuses start dropping off again. Like the system thinks you're not actually doing business if you're driving 400 miles a day.
+INTERVIEWS.md:419: **TPM:** That's very specific.
+INTERVIEWS.md:421: **Kevin:** I've tested it! I specifically planned trips to hit different efficiency levels and tracked the results. The pattern is clear.
+INTERVIEWS.md:427: Short trips, keep it under $75 per day. Medium trips—4-6 days—you can go up to $120 per day and still get good treatment. Long trips, you better keep it under $90 per day or you'll get penalized.
+INTERVIEWS.md:431: **Kevin:** Trial and error, mostly. I've done probably 50 trips in the last three years, all carefully planned to test different variables.
+INTERVIEWS.md:435: **Kevin:** [laughs] My wife thinks I'm crazy. But I've increased my average reimbursement by like 30% compared to before I started tracking.
+INTERVIEWS.md:443: **Kevin:** Tuesday submissions consistently outperform Monday submissions. Thursday is also good. Never submit on Friday—the system seems to be in a bad mood on Fridays.
+INTERVIEWS.md:447: **Kevin:** I know how it sounds! But I've got the data. 247 submissions tracked by day of week. Tuesday is 8% higher on average than Friday.
+INTERVIEWS.md:455: **Kevin:** [excited] Dave's been talking about my research? That's great! Yeah, I've found a weak but statistically significant correlation between moon phases and reimbursement amounts.
+INTERVIEWS.md:465: **Kevin:** Everything about this system is elaborate! Did you know there are at least six different calculation paths depending on your trip characteristics?
+INTERVIEWS.md:469: **Kevin:** Well, that's my theory based on the clustering patterns I see in the data. Quick high-mileage trips get calculated differently than long low-mileage trips, which get calculated differently than medium balanced trips, etc.
+INTERVIEWS.md:473: **Kevin:** Statistical analysis. I've done k-means clustering on all my data points, and they naturally separate into distinct groups with different reimbursement characteristics.
+INTERVIEWS.md:477: **Kevin:** [laughs] I know, I know. I might have gone a little overboard. But it works! I can predict my reimbursements within about 15% accuracy now.
+INTERVIEWS.md:481: **Kevin:** The key insight is that it's not just about the individual factors—it's about the interactions between factors. Trip length times efficiency, spending per day times total mileage, stuff like that.
+INTERVIEWS.md:485: **Kevin:** Exactly! And there are threshold effects too. Certain combinations trigger bonuses, other combinations trigger penalties. It's like the system has these hidden decision trees.
+INTERVIEWS.md:487: **TPM:** Any specific combinations you've identified?
+INTERVIEWS.md:489: **Kevin:** Oh yeah. 5-day trips with 180+ miles per day and under $100 per day in spending—that's a guaranteed bonus. I call it the "sweet spot combo."
+INTERVIEWS.md:491: 8+ day trips with high spending—that's a guaranteed penalty. I call it the "vacation penalty."
+INTERVIEWS.md:493: High mileage with low spending—usually good. Low mileage with high spending—usually bad.
+INTERVIEWS.md:503: But the noise is small enough that if you optimize the controllable factors, you still come out ahead on average.
+INTERVIEWS.md:507: **Kevin:** I think the system has some kind of learning or adaptation component. My early trips when I first started tracking got different treatment than my recent trips, even controlling for all the factors I know about.
+INTERVIEWS.md:509: Could be that it builds a profile of each user and adjusts accordingly. Could be that it evolves over time. Hard to say without more data.
+INTERVIEWS.md:513: **Kevin:** [laughs] I warned you I was obsessed. But hey, if you're rebuilding the system, I'd love to help test it. I've got more data on this thing than probably anyone else in the company.
+INTERVIEWS.md:517: **Kevin:** No problem! And if you want to see my spreadsheets, just let me know. I've got pivot tables that'll blow your mind.
